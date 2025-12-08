@@ -29,7 +29,7 @@ export class Auth {
       user: { email, password },
     };
 
-    return this.http.post<AuthResponse>(`${this.apiUrl}/users`, request).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, request).pipe(
       tap((response) => {
         const user: User = {
           id: response.id,
@@ -37,6 +37,7 @@ export class Auth {
           email: response.email,
         };
         localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('token', response.token);
         this.currentUserSubject.next(user);
       })
     );
@@ -52,7 +53,7 @@ export class Auth {
       },
     };
 
-    return this.http.post<AuthResponse>(`${this.apiUrl}/users`, request).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/signup`, request).pipe(
       tap((response) => {
         const user: User = {
           id: response.id,
@@ -60,6 +61,7 @@ export class Auth {
           email: response.email,
         };
         localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('token', response.token);
         this.currentUserSubject.next(user);
       })
     );
@@ -67,7 +69,12 @@ export class Auth {
 
   logout(): void {
     localStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
     this.currentUserSubject.next(null);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
   }
 
   get currentUserValue(): User | null {

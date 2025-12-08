@@ -43,6 +43,8 @@ gem "devise"
 gem "omniauth-google-oauth2"
 # OpenAPI/Swagger documentation
 gem "rswag"
+# JWT for token-based authentication
+gem "jwt"
 
 
 group :development, :test do

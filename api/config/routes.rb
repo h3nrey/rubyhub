@@ -4,6 +4,11 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     namespace :v1 do
+      # Authentication routes
+      post 'auth/login', to: 'auth#login'
+      post 'auth/signup', to: 'auth#signup'
+      
+      # Resource routes
       resources :arcades
       resources :users
     end

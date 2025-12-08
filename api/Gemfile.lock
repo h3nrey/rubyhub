@@ -429,6 +429,7 @@ DEPENDENCIES
   factory_bot_rails
   faker
   image_processing (~> 1.2)
+  jwt
   kamal
   omniauth-google-oauth2
   pg (~> 1.5)
