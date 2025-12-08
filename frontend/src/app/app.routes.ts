@@ -5,5 +5,6 @@ import { Signup } from './pages/signup/signup';
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'signup', component: Signup },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'home', loadComponent: () => import('./pages/home/home').then((m) => m.Home) },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
 ];

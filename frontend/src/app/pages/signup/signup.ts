@@ -58,14 +58,14 @@ export class Signup {
 
       this.authService.signup(name, email, password).subscribe({
         next: (response) => {
-          this.toastr.success('Account created successfully!', 'Welcome!');
-          this.router.navigate(['/']);
           this.isLoading = false;
+          this.toastr.success('Account created successfully!', 'Welcome!');
+          this.router.navigate(['/home']);
         },
         error: (error) => {
+          this.isLoading = false;
           const errorMsg = error.error?.errors?.join(', ') || 'Could not create account';
           this.toastr.error(errorMsg, 'Signup failed');
-          this.isLoading = false;
         },
       });
     }
