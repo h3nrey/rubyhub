@@ -50,6 +50,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
   gem "rspec-rails"
+  gem "database_cleaner-active_record"
   
   # Factories and seeds
   gem "factory_bot_rails"
