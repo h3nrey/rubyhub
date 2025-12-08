@@ -1,4 +1,7 @@
 class Arcade < ApplicationRecord
+  # Associations
+  belongs_to :owner, class_name: 'User'
+
   # Validations
   validates :name, presence: true, uniqueness: true
   validates :theme, presence: true
