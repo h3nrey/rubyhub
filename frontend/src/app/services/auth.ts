@@ -1,6 +1,5 @@
-import { Injectable, inject, afterNextRender, PLATFORM_ID } from '@angular/core';
+import { Injectable, inject, afterNextRender } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { isPlatformBrowser } from '@angular/common';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { LoginRequest, SignupRequest, AuthResponse, User } from '../models/auth.models';
 import { environment } from '../../environments/environment';
@@ -11,7 +10,6 @@ import { environment } from '../../environments/environment';
 export class Auth {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
-  private platformId = inject(PLATFORM_ID);
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
@@ -76,10 +74,7 @@ export class Auth {
   }
 
   getToken(): string | null {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem('token');
-    }
-    return null;
+    return localStorage.getItem('token');
   }
 
   get currentUserValue(): User | null {
