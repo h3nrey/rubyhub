@@ -1,16 +1,18 @@
-<nav class="bg-white shadow-lg sticky top-0 z-50">
+<nav
+  class="bg-white dark:bg-dark-300 shadow-lg sticky top-0 z-50 border-b border-gray-200 dark:border-dark-100"
+>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-16">
       <!-- Logo and Brand -->
       <div class="flex items-center">
         <a routerLink="/" class="flex items-center space-x-3 group">
           <div
-            class="bg-gradient-to-br from-purple-600 to-blue-600 p-2 rounded-lg group-hover:scale-110 transition-transform"
+            class="bg-gradient-to-br from-primary-500 to-primary-600 p-2 rounded-lg group-hover:scale-110 transition-transform"
           >
-            <lucide-icon [img]="Gamepad2" class="text-white" [size]="24"></lucide-icon>
+            <lucide-icon [img]="Gamepad2" class="text-gray-900" [size]="24"></lucide-icon>
           </div>
           <span
-            class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
+            class="text-2xl font-bold bg-gradient-to-r from-primary-500 to-primary-600 bg-clip-text text-transparent"
           >
             ArcadeHub
           </span>
@@ -22,24 +24,52 @@
       <div class="hidden md:flex items-center space-x-4">
         <a
           routerLink="/"
-          routerLinkActive="text-purple-600"
-          class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+          routerLinkActive="text-primary-500"
+          class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-50 transition-colors text-gray-700 dark:text-gray-300"
         >
           <lucide-icon [img]="Home" [size]="20"></lucide-icon>
           <span class="font-medium">Home</span>
         </a>
 
+        <a
+          routerLink="/arcades"
+          routerLinkActive="text-primary-500"
+          class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-dark-50 transition-colors text-gray-700 dark:text-gray-300"
+        >
+          <lucide-icon [img]="Gamepad2" [size]="20"></lucide-icon>
+          <span class="font-medium">Arcades</span>
+        </a>
+
+        <!-- Theme Toggle -->
+        <button
+          (click)="toggleTheme()"
+          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
+          [attr.aria-label]="
+            themeService.currentTheme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+          "
+        >
+          @if (themeService.currentTheme() === 'dark') {
+          <lucide-icon [img]="Sun" [size]="20"></lucide-icon>
+          } @else {
+          <lucide-icon [img]="Moon" [size]="20"></lucide-icon>
+          }
+        </button>
+
         <!-- User Menu -->
-        <div class="flex items-center space-x-3 px-4 py-2 bg-gray-50 rounded-lg">
-          <lucide-icon [img]="User" class="text-gray-600" [size]="20"></lucide-icon>
-          <span class="text-sm font-medium text-gray-700">
+        <div class="flex items-center space-x-3 px-4 py-2 bg-gray-50 dark:bg-dark-50 rounded-lg">
+          <lucide-icon
+            [img]="User"
+            class="text-gray-600 dark:text-gray-400"
+            [size]="20"
+          ></lucide-icon>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
             {{ (authService.currentUser$ | async)?.name || 'User' }}
           </span>
         </div>
 
         <button
           (click)="logout()"
-          class="flex items-center space-x-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+          class="flex items-center space-x-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
         >
           <lucide-icon [img]="LogOut" [size]="20"></lucide-icon>
           <span class="font-medium">Logout</span>
@@ -47,15 +77,27 @@
       </div>
       } @else {
       <div class="hidden md:flex items-center space-x-4">
+        <!-- Theme Toggle for non-logged in users -->
+        <button
+          (click)="toggleTheme()"
+          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
+        >
+          @if (themeService.currentTheme() === 'dark') {
+          <lucide-icon [img]="Sun" [size]="20"></lucide-icon>
+          } @else {
+          <lucide-icon [img]="Moon" [size]="20"></lucide-icon>
+          }
+        </button>
+
         <a
           routerLink="/login"
-          class="px-4 py-2 text-gray-700 font-medium hover:text-purple-600 transition-colors"
+          class="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium hover:text-primary-500 transition-colors"
         >
           Sign In
         </a>
         <a
           routerLink="/signup"
-          class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg hover:shadow-lg transition-shadow"
+          class="px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-gray-900 font-medium rounded-lg hover:shadow-lg transition-shadow"
         >
           Get Started
         </a>
@@ -66,7 +108,7 @@
       <div class="md:hidden flex items-center">
         <button
           (click)="toggleMobileMenu()"
-          class="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
         >
           @if (isMobileMenuOpen) {
           <lucide-icon [img]="X" [size]="24"></lucide-icon>
@@ -80,13 +122,17 @@
 
   <!-- Mobile Menu -->
   @if (isMobileMenuOpen) {
-  <div class="md:hidden border-t border-gray-200 bg-white">
+  <div class="md:hidden border-t border-gray-200 dark:border-dark-100 bg-white dark:bg-dark-300">
     <div class="px-4 py-3 space-y-2">
       @if (authService.isLoggedIn) {
       <!-- User Info -->
-      <div class="flex items-center space-x-3 px-4 py-3 bg-gray-50 rounded-lg mb-2">
-        <lucide-icon [img]="User" class="text-gray-600" [size]="20"></lucide-icon>
-        <span class="text-sm font-medium text-gray-700">
+      <div class="flex items-center space-x-3 px-4 py-3 bg-gray-50 dark:bg-dark-50 rounded-lg mb-2">
+        <lucide-icon
+          [img]="User"
+          class="text-gray-600 dark:text-gray-400"
+          [size]="20"
+        ></lucide-icon>
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
           {{ (authService.currentUser$ | async)?.name || 'User' }}
         </span>
       </div>
@@ -94,31 +140,68 @@
       <a
         routerLink="/"
         (click)="toggleMobileMenu()"
-        class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors"
+        class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
       >
         <lucide-icon [img]="Home" [size]="20"></lucide-icon>
         <span class="font-medium">Home</span>
       </a>
 
+      <a
+        routerLink="/arcades"
+        (click)="toggleMobileMenu()"
+        class="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
+      >
+        <lucide-icon [img]="Gamepad2" [size]="20"></lucide-icon>
+        <span class="font-medium">Arcades</span>
+      </a>
+
+      <!-- Theme Toggle in Mobile -->
+      <button
+        (click)="toggleTheme()"
+        class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
+      >
+        @if (themeService.currentTheme() === 'dark') {
+        <lucide-icon [img]="Sun" [size]="20"></lucide-icon>
+        <span class="font-medium">Light Mode</span>
+        } @else {
+        <lucide-icon [img]="Moon" [size]="20"></lucide-icon>
+        <span class="font-medium">Dark Mode</span>
+        }
+      </button>
+
       <button
         (click)="logout()"
-        class="w-full flex items-center space-x-3 px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+        class="w-full flex items-center space-x-3 px-4 py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
       >
         <lucide-icon [img]="LogOut" [size]="20"></lucide-icon>
         <span class="font-medium">Logout</span>
       </button>
       } @else {
+      <!-- Theme Toggle for non-logged in users in mobile -->
+      <button
+        (click)="toggleTheme()"
+        class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
+      >
+        @if (themeService.currentTheme() === 'dark') {
+        <lucide-icon [img]="Sun" [size]="20"></lucide-icon>
+        <span class="font-medium">Light Mode</span>
+        } @else {
+        <lucide-icon [img]="Moon" [size]="20"></lucide-icon>
+        <span class="font-medium">Dark Mode</span>
+        }
+      </button>
+
       <a
         routerLink="/login"
         (click)="toggleMobileMenu()"
-        class="block px-4 py-3 text-gray-700 font-medium hover:bg-gray-100 rounded-lg transition-colors"
+        class="block px-4 py-3 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
       >
         Sign In
       </a>
       <a
         routerLink="/signup"
         (click)="toggleMobileMenu()"
-        class="block px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg hover:shadow-lg transition-shadow text-center"
+        class="block px-4 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-gray-900 font-medium rounded-lg hover:shadow-lg transition-shadow text-center"
       >
         Get Started
       </a>

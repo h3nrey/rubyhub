@@ -1,24 +1,30 @@
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-50 dark:bg-dark-300">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Welcome Section -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="bg-white dark:bg-dark-50 rounded-lg shadow-md p-6 mb-6">
       <div class="flex items-center gap-4">
-        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-          <lucide-icon [img]="Gamepad2" class="text-blue-600" [size]="24"></lucide-icon>
+        <div
+          class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center"
+        >
+          <lucide-icon
+            [img]="Gamepad2"
+            class="text-primary-600 dark:text-primary-500"
+            [size]="24"
+          ></lucide-icon>
         </div>
         <div>
-          <h1 class="text-2xl font-bold text-gray-800">
+          <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
             Welcome, {{ (currentUser$ | async)?.name }}!
           </h1>
-          <p class="text-gray-600">Manage your arcade collection</p>
+          <p class="text-gray-600 dark:text-gray-400">Manage your arcade collection</p>
         </div>
       </div>
     </div>
 
     <!-- Arcades List Placeholder -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Arcades</h2>
-      <div class="text-center py-12 text-gray-500">
+    <div class="bg-white dark:bg-dark-50 rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Your Arcades</h2>
+      <div class="text-center py-12 text-gray-500 dark:text-gray-400">
         <p>No arcades yet. Start by creating your first arcade!</p>
       </div>
     </div>
