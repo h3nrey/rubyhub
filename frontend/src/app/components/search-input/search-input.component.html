@@ -1,0 +1,12 @@
+<div
+  class="flex items-center gap-3 px-4 py-3 bg-gray-50 dark:bg-dark-100 rounded-lg border border-gray-200 dark:border-dark-200"
+>
+  <lucide-icon [img]="Search" class="text-gray-400 dark:text-gray-500" [size]="20"></lucide-icon>
+  <input
+    type="text"
+    [value]="value()"
+    (input)="onSearchChange($event)"
+    [placeholder]="placeholder()"
+    class="flex-1 bg-transparent outline-none text-gray-700 dark:text-gray-300 placeholder-gray-500 dark:placeholder-gray-400"
+  />
+</div>

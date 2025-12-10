@@ -1,0 +1,40 @@
+<button
+  (click)="onClick()"
+  class="text-left bg-white dark:bg-dark-50 rounded-lg shadow-md hover:shadow-xl transition-all hover:scale-105 overflow-hidden cursor-pointer border border-transparent hover:border-primary-300 dark:hover:border-primary-700"
+>
+  <div class="p-6">
+    <div class="flex items-start justify-between mb-4">
+      <div class="flex-1">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">
+          {{ arcade().name }}
+        </h3>
+        <span
+          class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium"
+          [class.bg-green-100]="arcade().online"
+          [class.text-green-800]="arcade().online"
+          [class.dark:bg-green-900/30]="arcade().online"
+          [class.dark:text-green-400]="arcade().online"
+          [class.bg-gray-100]="!arcade().online"
+          [class.text-gray-800]="!arcade().online"
+          [class.dark:bg-gray-700]="!arcade().online"
+          [class.dark:text-gray-400]="!arcade().online"
+        >
+          <lucide-icon [img]="arcade().online ? Wifi : WifiOff" [size]="12"></lucide-icon>
+          {{ arcade().online ? 'Online' : 'Offline' }}
+        </span>
+      </div>
+    </div>
+
+    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+      {{ arcade().description || 'No description available' }}
+    </p>
+
+    <div class="flex items-center justify-between">
+      <span
+        class="px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 rounded-full text-xs font-medium"
+      >
+        {{ arcade().theme }}
+      </span>
+    </div>
+  </div>
+</button>

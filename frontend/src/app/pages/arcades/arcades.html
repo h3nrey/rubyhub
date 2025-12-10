@@ -26,72 +26,27 @@
       </button>
     </div>
 
-    <!-- Filters -->
+    <!-- Search and Filters -->
     <div class="bg-white dark:bg-dark-50 rounded-lg shadow-md p-4 mb-6">
-      <div class="flex flex-wrap items-center gap-4">
-        <div class="flex items-center gap-2">
-          <lucide-icon
-            [img]="Filter"
-            class="text-gray-600 dark:text-gray-400"
-            [size]="20"
-          ></lucide-icon>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filters:</span>
-        </div>
+      <div class="flex flex-col gap-4">
+        <!-- Search Input -->
+        <app-search-input
+          [value]="filters().search"
+          placeholder="Search by arcade name or description..."
+          (searchChange)="onSearchChange($event)"
+        />
 
-        <button
-          (click)="filterByOnline(undefined)"
-          [class.bg-primary-500]="filters.online === undefined"
-          [class.text-gray-900]="filters.online === undefined"
-          [class.bg-gray-200]="filters.online !== undefined"
-          [class.dark:bg-dark-100]="filters.online !== undefined"
-          [class.text-gray-700]="filters.online !== undefined"
-          [class.dark:text-gray-300]="filters.online !== undefined"
-          class="px-4 py-2 rounded-lg font-medium transition"
-        >
-          All
-        </button>
-
-        <button
-          (click)="filterByOnline(true)"
-          [class.bg-primary-500]="filters.online === true"
-          [class.text-gray-900]="filters.online === true"
-          [class.bg-gray-200]="filters.online !== true"
-          [class.dark:bg-dark-100]="filters.online !== true"
-          [class.text-gray-700]="filters.online !== true"
-          [class.dark:text-gray-300]="filters.online !== true"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition"
-        >
-          <lucide-icon [img]="Wifi" [size]="16"></lucide-icon>
-          Online
-        </button>
-
-        <button
-          (click)="filterByOnline(false)"
-          [class.bg-primary-500]="filters.online === false"
-          [class.text-gray-900]="filters.online === false"
-          [class.bg-gray-200]="filters.online !== false"
-          [class.dark:bg-dark-100]="filters.online !== false"
-          [class.text-gray-700]="filters.online !== false"
-          [class.dark:text-gray-300]="filters.online !== false"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition"
-        >
-          <lucide-icon [img]="WifiOff" [size]="16"></lucide-icon>
-          Offline
-        </button>
-
-        @if (filters.online !== undefined || filters.theme) {
-        <button
-          (click)="clearFilters()"
-          class="ml-auto text-sm text-primary-600 dark:text-primary-500 hover:underline"
-        >
-          Clear Filters
-        </button>
-        }
+        <!-- Filters -->
+        <app-arcade-filters
+          [filters]="filters()"
+          (onlineFilterChange)="filterByOnline($event)"
+          (clearFilters)="clearFilters()"
+        />
       </div>
     </div>
 
     <!-- Loading State -->
-    @if (isLoading) {
+    @if (isLoading()) {
     <div class="flex justify-center items-center py-12">
       <div class="animate-spin text-primary-600 dark:text-primary-500">
         <lucide-icon [img]="Gamepad2" [size]="48"></lucide-icon>
@@ -100,70 +55,30 @@
     }
 
     <!-- Arcades Grid -->
-    @if (!isLoading && arcades.length > 0) {
+    @if (!isLoading() && allArcades().length > 0) {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      @for (arcade of arcades; track arcade.id) {
-      <div
-        class="bg-white dark:bg-dark-50 rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden"
-      >
-        <div class="p-6">
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex-1">
-              <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">
-                {{ arcade.name }}
-              </h3>
-              <span
-                class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium"
-                [class.bg-green-100]="arcade.online"
-                [class.text-green-800]="arcade.online"
-                [class.dark:bg-green-900/30]="arcade.online"
-                [class.dark:text-green-400]="arcade.online"
-                [class.bg-gray-100]="!arcade.online"
-                [class.text-gray-800]="!arcade.online"
-                [class.dark:bg-gray-700]="!arcade.online"
-                [class.dark:text-gray-400]="!arcade.online"
-              >
-                <lucide-icon [img]="arcade.online ? Wifi : WifiOff" [size]="12"></lucide-icon>
-                {{ arcade.online ? 'Online' : 'Offline' }}
-              </span>
-            </div>
-          </div>
-
-          <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
-            {{ arcade.description || 'No description available' }}
-          </p>
-
-          <div class="flex items-center justify-between">
-            <span
-              class="px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 rounded-full text-xs font-medium"
-            >
-              {{ arcade.theme }}
-            </span>
-            <div class="flex gap-2">
-              <button
-                [routerLink]="['/arcades', arcade.id, 'edit']"
-                class="px-3 py-1 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition"
-              >
-                Edit
-              </button>
-              <button
-                (click)="deleteArcade(arcade.id)"
-                class="px-3 py-1 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      @for (arcade of allArcades(); track arcade.id) {
+      <app-arcade-card [arcade]="arcade" (cardClick)="goToArcadeDetail($event)" />
       }
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-8">
+      <app-paginator
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        (previousPage)="previousPage()"
+        (nextPage)="nextPage()"
+      />
     </div>
     }
 
     <!-- Empty State -->
-    @if (!isLoading && arcades.length === 0) {
+    @if (!isLoading() && allArcades().length === 0) {
     <div class="bg-white dark:bg-dark-50 rounded-lg shadow-md p-12 text-center">
-      <div class="w-16 h-16 bg-gray-100 dark:bg-dark-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div
+        class="w-16 h-16 bg-gray-100 dark:bg-dark-100 rounded-full flex items-center justify-center mx-auto mb-4"
+      >
         <lucide-icon
           [img]="Gamepad2"
           class="text-gray-400 dark:text-gray-600"
@@ -172,8 +87,8 @@
       </div>
       <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">No arcades found</h3>
       <p class="text-gray-600 dark:text-gray-400 mb-6">
-        @if (filters.online !== undefined || filters.theme) { Try adjusting your filters or } Create
-        your first arcade to get started!
+        @if (filters().online !== undefined || filters().search) { Try adjusting your filters or }
+        Create your first arcade to get started!
       </p>
       <button
         routerLink="/arcades/new"

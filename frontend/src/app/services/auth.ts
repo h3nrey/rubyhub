@@ -1,4 +1,4 @@
-import { Injectable, inject, afterNextRender } from '@angular/core';
+import { Injectable, inject, afterNextRender, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { LoginRequest, SignupRequest, AuthResponse, User } from '../models/auth.models';
@@ -14,12 +14,18 @@ export class Auth {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
+  private tokenSignal = signal<string | null>(null);
+
   constructor() {
-    // Load user from localStorage only on client side
+    // Load user and token from localStorage only on client side
     afterNextRender(() => {
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
         this.currentUserSubject.next(JSON.parse(storedUser));
+      }
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
+        this.tokenSignal.set(storedToken);
       }
     });
   }
@@ -36,9 +42,12 @@ export class Auth {
           name: response.name,
           email: response.email,
         };
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        localStorage.setItem('token', response.token);
-        this.currentUserSubject.next(user);
+        afterNextRender(() => {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('token', response.token);
+          this.tokenSignal.set(response.token);
+          this.currentUserSubject.next(user);
+        });
       })
     );
   }
@@ -60,21 +69,27 @@ export class Auth {
           name: response.name,
           email: response.email,
         };
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        localStorage.setItem('token', response.token);
-        this.currentUserSubject.next(user);
+        afterNextRender(() => {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('token', response.token);
+          this.tokenSignal.set(response.token);
+          this.currentUserSubject.next(user);
+        });
       })
     );
   }
 
   logout(): void {
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('token');
-    this.currentUserSubject.next(null);
+    afterNextRender(() => {
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('token');
+      this.tokenSignal.set(null);
+      this.currentUserSubject.next(null);
+    });
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return this.tokenSignal();
   }
 
   get currentUserValue(): User | null {

@@ -4,6 +4,14 @@ import { Observable } from 'rxjs';
 import { Arcade, CreateArcadeRequest, UpdateArcadeRequest } from '../models/arcade.models';
 import { environment } from '../../environments/environment';
 
+export interface ArcadeFilters {
+  online?: boolean;
+  theme?: string;
+  search?: string;
+  page?: number;
+  per_page?: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -11,18 +19,32 @@ export class ArcadeService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/arcades`;
 
-  getAll(filters?: { online?: boolean; theme?: string }): Observable<Arcade[]> {
+  getAll(filters?: ArcadeFilters): Observable<any> {
     let params = new HttpParams();
 
-    if (filters?.online !== undefined) {
-      params = params.set('online', filters.online.toString());
+    if (filters) {
+      if (filters.online !== undefined) {
+        params = params.set('online', filters.online.toString());
+      }
+
+      if (filters.theme) {
+        params = params.set('theme', filters.theme);
+      }
+
+      if (filters.search) {
+        params = params.set('search', filters.search);
+      }
+
+      if (filters.page !== undefined) {
+        params = params.set('page', filters.page.toString());
+      }
+
+      if (filters.per_page !== undefined) {
+        params = params.set('per_page', filters.per_page.toString());
+      }
     }
 
-    if (filters?.theme) {
-      params = params.set('theme', filters.theme);
-    }
-
-    return this.http.get<Arcade[]>(this.apiUrl, { params });
+    return this.http.get<any>(this.apiUrl, { params });
   }
 
   getById(id: number): Observable<Arcade> {
