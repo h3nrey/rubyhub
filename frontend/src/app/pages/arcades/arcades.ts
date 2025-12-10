@@ -1,10 +1,20 @@
-import { Component, inject, signal, ChangeDetectionStrategy, computed } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+  computed,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { ArcadeService } from '../../services/arcade.service';
+import { ArcadeService, ArcadeFilterRequest } from '../../services/arcade.service';
 import { Arcade } from '../../models/arcade.models';
+import { PaginationResponse } from '../../models/common.models';
 import { LucideAngularModule, Gamepad2, Plus } from 'lucide-angular';
 import { ToastrService } from 'ngx-toastr';
+import { debounceTime, Subject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SearchInputComponent } from '../../components/search-input/search-input.component';
 import { ArcadeCardComponent } from '../../components/arcade-card/arcade-card.component';
 import { ArcadeFiltersComponent } from '../../components/arcade-filters/arcade-filters.component';
@@ -48,12 +58,21 @@ export class Arcades {
     search: '' as string,
   });
 
+  // Debounce subject for search
+  private searchSubject = new Subject<string>();
+
   // Computed total pages
   totalPages = computed(() => {
     return Math.ceil(this.totalCount() / this.itemsPerPage());
   });
 
   constructor(private readonly arcadeService: ArcadeService) {
+    // Setup search debounce (300ms delay)
+    this.searchSubject.pipe(debounceTime(300), takeUntilDestroyed()).subscribe((search) => {
+      this.filters.update((f) => ({ ...f, search }));
+      this.applyFilters();
+    });
+
     this.loadArcades();
   }
 
@@ -69,26 +88,17 @@ export class Arcades {
   loadArcades(): void {
     this.isLoading.set(true);
     const currentFilters = this.filters();
-    const filterParams: any = {
+    const filterParams: ArcadeFilterRequest = {
       page: this.currentPage(),
       per_page: this.itemsPerPage(),
+      online: currentFilters.online,
+      theme: currentFilters.theme,
+      search: currentFilters.search,
     };
-
-    if (currentFilters.online !== undefined) {
-      filterParams.online = currentFilters.online;
-    }
-
-    if (currentFilters.theme) {
-      filterParams.theme = currentFilters.theme;
-    }
-
-    if (currentFilters.search) {
-      filterParams.search = currentFilters.search;
-    }
 
     try {
       this.arcadeService.getAll(filterParams).subscribe({
-        next: (response: any) => {
+        next: (response) => {
           console.log('Arcades loaded:', response);
           // Handle both array response and paginated response
           if (Array.isArray(response)) {
@@ -96,8 +106,9 @@ export class Arcades {
             this.totalCount.set(response.length);
           } else {
             // If API returns paginated object with data and total
-            this.allArcades.set(response.data || response.arcades || []);
-            this.totalCount.set(response.total || response.count || 0);
+            const paginatedResponse = response as PaginationResponse<Arcade>;
+            this.allArcades.set(paginatedResponse.data || []);
+            this.totalCount.set(paginatedResponse.total || 0);
           }
           this.isLoading.set(false);
         },
@@ -114,8 +125,7 @@ export class Arcades {
   }
 
   onSearchChange(search: string): void {
-    this.filters.update((f) => ({ ...f, search }));
-    this.applyFilters();
+    this.searchSubject.next(search);
   }
 
   filterByOnline(online: boolean | undefined): void {
