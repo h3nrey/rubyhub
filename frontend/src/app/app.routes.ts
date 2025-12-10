@@ -32,5 +32,12 @@ export const routes: Routes = [
     },
     loadComponent: () => import('./pages/arcades/arcades').then((m) => m.Arcades),
   },
+  {
+    path: 'arcades/:id',
+    data: {
+      RenderMode: 'client',
+    },
+    loadComponent: () => import('./pages/arcade-detail/arcade-detail').then((m) => m.ArcadeDetail),
+  },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
 ];

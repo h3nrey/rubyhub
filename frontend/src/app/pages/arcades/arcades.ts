@@ -107,10 +107,6 @@ export class Arcades {
     });
   }
 
-  goToArcadeDetail(arcadeId: number): void {
-    this.router.navigate(['/arcades', arcadeId]);
-  }
-
   previousPage(): void {
     const current = this.filters().page;
     if (current > 1) {
