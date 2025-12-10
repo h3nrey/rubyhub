@@ -3,20 +3,15 @@ module Api
     class ArcadesController < ApplicationController
       before_action :set_arcade, only: [:show, :update, :destroy]
 
-      # GET /api/v1/arcades
       def index
-        @arcades = Arcade.all
-        @arcades = filter_arcades(@arcades)
-        
-        render json: @arcades
+        arcades = ArcadeService.new.list(filter_params)
+        render json: arcades
       end
 
-      # GET /api/v1/arcades/:id
       def show
         render json: @arcade
       end
 
-      # POST /api/v1/arcades
       def create
         @arcade = Arcade.new(arcade_params)
 
@@ -27,7 +22,6 @@ module Api
         end
       end
 
-      # PUT/PATCH /api/v1/arcades/:id
       def update
         if @arcade.update(arcade_params)
           render json: @arcade
@@ -36,7 +30,6 @@ module Api
         end
       end
 
-      # DELETE /api/v1/arcades/:id
       def destroy
         @arcade.destroy
         head :no_content
@@ -54,10 +47,8 @@ module Api
         params.require(:arcade).permit(:name, :theme, :description, :online)
       end
 
-      def filter_arcades(arcades)
-        arcades = arcades.where(online: params[:online]) if params[:online].present?
-        arcades = arcades.by_theme(params[:theme]) if params[:theme].present?
-        arcades
+      def filter_params
+        params.permit(:page, :per_page, :search, :online, :theme)
       end
     end
   end

@@ -5,10 +5,6 @@ import { Arcade, CreateArcadeRequest, UpdateArcadeRequest } from '../models/arca
 import { BaseFilterRequest, PaginationResponse } from '../models/common.models';
 import { environment } from '../../environments/environment';
 
-/**
- * Arcade-specific filter request
- * Extends BaseFilterRequest with arcade-specific filters
- */
 export interface ArcadeFilterRequest extends BaseFilterRequest {
   online?: boolean;
   theme?: string;
@@ -21,76 +17,50 @@ export class ArcadeService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/arcades`;
 
-  /**
-   * Get all arcades with optional filters
-   * @param filters - Filter criteria for arcades
-   * @returns Observable of arcade data or paginated response
-   */
   getAll(filters?: ArcadeFilterRequest): Observable<Arcade[] | PaginationResponse<Arcade>> {
-    let params = new HttpParams();
-
-    if (filters) {
-      // Pagination parameters
-      if (filters.page !== undefined) {
-        params = params.set('page', filters.page.toString());
-      }
-
-      if (filters.per_page !== undefined) {
-        params = params.set('per_page', filters.per_page.toString());
-      }
-
-      // Search parameter
-      if (filters.search) {
-        params = params.set('search', filters.search);
-      }
-
-      // Status filter
-      if (filters.online !== undefined) {
-        params = params.set('online', filters.online.toString());
-      }
-
-      // Theme filter
-      if (filters.theme) {
-        params = params.set('theme', filters.theme);
-      }
-    }
-
+    const params = this.buildParams(filters);
     return this.http.get<Arcade[] | PaginationResponse<Arcade>>(this.apiUrl, { params });
   }
 
-  /**
-   * Get arcade by ID
-   * @param id - Arcade ID
-   * @returns Observable of arcade data
-   */
+  private buildParams(filters?: ArcadeFilterRequest): HttpParams {
+    if (!filters) return new HttpParams();
+
+    let params = new HttpParams();
+
+    if (filters.page !== undefined && filters.page !== null) {
+      params = params.set('page', String(filters.page));
+    }
+
+    if (filters.per_page !== undefined && filters.per_page !== null) {
+      params = params.set('per_page', String(filters.per_page));
+    }
+
+    if (filters.search !== undefined && filters.search !== null && filters.search !== '') {
+      params = params.set('search', filters.search);
+    }
+
+    if (filters.online !== undefined && filters.online !== null) {
+      params = params.set('online', String(filters.online));
+    }
+
+    if (filters.theme !== undefined && filters.theme !== null && filters.theme !== '') {
+      params = params.set('theme', filters.theme);
+    }
+
+    return params;
+  }
   getById(id: number): Observable<Arcade> {
     return this.http.get<Arcade>(`${this.apiUrl}/${id}`);
   }
 
-  /**
-   * Create new arcade
-   * @param request - Create arcade request
-   * @returns Observable of created arcade
-   */
   create(request: CreateArcadeRequest): Observable<Arcade> {
     return this.http.post<Arcade>(this.apiUrl, request);
   }
 
-  /**
-   * Update arcade
-   * @param id - Arcade ID
-   * @param request - Update arcade request
-   * @returns Observable of updated arcade
-   */
   update(id: number, request: UpdateArcadeRequest): Observable<Arcade> {
     return this.http.put<Arcade>(`${this.apiUrl}/${id}`, request);
   }
 
-  /**
-   * Delete arcade
-   * @param id - Arcade ID
-   * @returns Observable of void
-   */
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

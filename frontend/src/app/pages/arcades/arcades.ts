@@ -5,6 +5,7 @@ import {
   ChangeDetectionStrategy,
   computed,
   effect,
+  untracked,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -43,85 +44,52 @@ export class Arcades {
   readonly Gamepad2 = Gamepad2;
   readonly Plus = Plus;
 
+  private filters = signal<ArcadeFilterRequest>({
+    page: 1,
+    per_page: 9,
+    search: '',
+  });
+
   allArcades = signal<Arcade[]>([]);
   isLoading = signal(false);
   totalCount = signal(0);
+  totalPages = computed(() => Math.ceil(this.totalCount() / this.filters().per_page));
+  currentPage = computed(() => this.filters().page);
 
-  // Pagination
-  currentPage = signal(1);
-  itemsPerPage = signal(9);
-
-  // Filters and search
-  filters = signal({
-    online: undefined as boolean | undefined,
-    theme: '' as string,
-    search: '' as string,
-  });
-
-  // Debounce subject for search
   private searchSubject = new Subject<string>();
 
-  // Computed total pages
-  totalPages = computed(() => {
-    return Math.ceil(this.totalCount() / this.itemsPerPage());
-  });
-
   constructor(private readonly arcadeService: ArcadeService) {
-    // Setup search debounce (300ms delay)
     this.searchSubject.pipe(debounceTime(300), takeUntilDestroyed()).subscribe((search) => {
-      this.filters.update((f) => ({ ...f, search }));
-      this.applyFilters();
+      this.filters.update((f) => ({ ...f, search, page: 1 }));
     });
 
-    this.loadArcades();
+    effect(() => {
+      this.filters();
+      untracked(() => this.loadArcades());
+    });
   }
 
-  ngOnInit() {
-    // Additional initialization if needed
-  }
-
-  private applyFilters(): void {
-    this.currentPage.set(1); // Reset to first page when filtering
-    this.loadArcades();
-  }
-
-  loadArcades(): void {
+  private loadArcades(): void {
     this.isLoading.set(true);
-    const currentFilters = this.filters();
-    const filterParams: ArcadeFilterRequest = {
-      page: this.currentPage(),
-      per_page: this.itemsPerPage(),
-      online: currentFilters.online,
-      theme: currentFilters.theme,
-      search: currentFilters.search,
-    };
+    const filterParams = this.filters();
 
-    try {
-      this.arcadeService.getAll(filterParams).subscribe({
-        next: (response) => {
-          console.log('Arcades loaded:', response);
-          // Handle both array response and paginated response
-          if (Array.isArray(response)) {
-            this.allArcades.set(response);
-            this.totalCount.set(response.length);
-          } else {
-            // If API returns paginated object with data and total
-            const paginatedResponse = response as PaginationResponse<Arcade>;
-            this.allArcades.set(paginatedResponse.data || []);
-            this.totalCount.set(paginatedResponse.total || 0);
-          }
-          this.isLoading.set(false);
-        },
-        error: (error) => {
-          console.error('Error loading arcades:', error);
-          this.toastr.error('Failed to load arcades', 'Error');
-          this.isLoading.set(false);
-        },
-      });
-    } catch (error) {
-      console.error('Error initiating arcades load:', error);
-      this.isLoading.set(false);
-    }
+    this.arcadeService.getAll(filterParams).subscribe({
+      next: (response) => {
+        if (Array.isArray(response)) {
+          this.allArcades.set(response);
+          this.totalCount.set(response.length);
+        } else {
+          const paginatedResponse = response as PaginationResponse<Arcade>;
+          this.allArcades.set(paginatedResponse.data || []);
+          this.totalCount.set(paginatedResponse.total || 0);
+        }
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.toastr.error('Failed to load arcades', 'Error');
+        this.isLoading.set(false);
+      },
+    });
   }
 
   onSearchChange(search: string): void {
@@ -129,17 +97,14 @@ export class Arcades {
   }
 
   filterByOnline(online: boolean | undefined): void {
-    this.filters.update((f) => ({ ...f, online }));
-    this.applyFilters();
+    this.filters.update((f) => ({ ...f, online, page: 1 }));
   }
 
   clearFilters(): void {
     this.filters.set({
-      online: undefined,
-      theme: '',
-      search: '',
+      page: 1,
+      per_page: 9,
     });
-    this.applyFilters();
   }
 
   goToArcadeDetail(arcadeId: number): void {
@@ -147,30 +112,16 @@ export class Arcades {
   }
 
   previousPage(): void {
-    if (this.currentPage() > 1) {
-      this.currentPage.update((p) => p - 1);
-      this.loadArcades();
+    const current = this.filters().page;
+    if (current > 1) {
+      this.filters.update((f) => ({ ...f, page: current - 1 }));
     }
   }
 
   nextPage(): void {
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update((p) => p + 1);
-      this.loadArcades();
-    }
-  }
-
-  deleteArcade(id: number): void {
-    if (confirm('Are you sure you want to delete this arcade?')) {
-      this.arcadeService.delete(id).subscribe({
-        next: () => {
-          this.toastr.success('Arcade deleted successfully', 'Success');
-          this.loadArcades();
-        },
-        error: (error) => {
-          this.toastr.error('Failed to delete arcade', 'Error');
-        },
-      });
+    const current = this.filters().page;
+    if (current < this.totalPages()) {
+      this.filters.update((f) => ({ ...f, page: current + 1 }));
     }
   }
 }

@@ -10,6 +10,7 @@ class Arcade < ApplicationRecord
   scope :online, -> { where(online: true) }
   scope :offline, -> { where(online: false) }
   scope :by_theme, ->(theme) { where(theme: theme) }
+  scope :by_search, ->(query) { where('name ILIKE ? OR description ILIKE ?', "%#{query}%", "%#{query}%") }
 
   # Instance methods
   def status
