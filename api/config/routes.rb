@@ -8,7 +8,11 @@ Rails.application.routes.draw do
       post 'auth/signup', to: 'auth#signup'
       
       resources :arcades do
-        resources :games
+        resources :games do
+          collection do
+            get 'filter_options'
+          end
+        end
       end
       resources :users
     end

@@ -5,13 +5,22 @@ module Api
       before_action :set_game, only: [:show, :update, :destroy]
 
       def index
-        games = @arcade.games
-        games = games.by_search(params[:search]) if params[:search].present?
-        games = games.by_genre(params[:genre]) if params[:genre].present?
-        games = games.by_developer(params[:developer]) if params[:developer].present?
-        games = games.recent.limit(50)
+        service = GameService.new(@arcade)
+        filters = filter_params
+        result = service.list(filters)
 
-        render json: games
+        render json: result
+      end
+
+      def filter_options
+        games = @arcade.games
+        genres = games.distinct.pluck(:genre).compact.sort
+        developers = games.distinct.pluck(:developer).compact.sort
+
+        render json: {
+          genres: genres,
+          developers: developers
+        }
       end
 
       def show
@@ -57,6 +66,10 @@ module Api
 
       def game_params
         params.require(:game).permit(:name, :genre, :developer, :release_year, :description, :rating, :cover_image)
+      end
+
+      def filter_params
+        params.permit(:page, :per_page, :search, :genre, :developer)
       end
     end
   end

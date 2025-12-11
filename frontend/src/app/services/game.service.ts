@@ -10,6 +10,11 @@ export interface GameFilterRequest extends BaseFilterRequest {
   developer?: string;
 }
 
+export interface GameFilterOptions {
+  genres: string[];
+  developers: string[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -19,14 +24,19 @@ export class GameService {
 
   getByArcadeId(
     arcadeId: number,
-    filters?: GameFilterRequest
+    filters?: Partial<GameFilterRequest>
   ): Observable<Game[] | PaginationResponse<Game>> {
     const url = `${this.apiUrl}/arcades/${arcadeId}/games`;
     const params = this.buildParams(filters);
     return this.http.get<Game[] | PaginationResponse<Game>>(url, { params });
   }
 
-  private buildParams(filters?: GameFilterRequest): HttpParams {
+  getFilterOptions(arcadeId: number): Observable<GameFilterOptions> {
+    const url = `${this.apiUrl}/arcades/${arcadeId}/games/filter_options`;
+    return this.http.get<GameFilterOptions>(url);
+  }
+
+  private buildParams(filters?: Partial<GameFilterRequest>): HttpParams {
     if (!filters) return new HttpParams();
 
     let params = new HttpParams();

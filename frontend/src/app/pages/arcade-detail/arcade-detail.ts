@@ -29,6 +29,8 @@ import { ArcadeGamesSectionComponent } from '../../components/arcade-games-secti
 import { ArcadeMatchesSectionComponent } from '../../components/arcade-matches-section/arcade-matches-section.component';
 import { ArcadePlayersSectionComponent } from '../../components/arcade-players-section/arcade-players-section.component';
 import { ArcadeRankingSectionComponent } from '../../components/arcade-ranking-section/arcade-ranking-section.component';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
+import { BackButtonComponent } from '../../components/back-button/back-button.component';
 
 @Component({
   selector: 'app-arcade-detail',
@@ -42,6 +44,8 @@ import { ArcadeRankingSectionComponent } from '../../components/arcade-ranking-s
     ArcadeMatchesSectionComponent,
     ArcadePlayersSectionComponent,
     ArcadeRankingSectionComponent,
+    LoadingSpinnerComponent,
+    BackButtonComponent,
   ],
   templateUrl: './arcade-detail.html',
   styleUrl: './arcade-detail.scss',

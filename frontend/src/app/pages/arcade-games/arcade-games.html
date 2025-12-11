@@ -1,0 +1,89 @@
+<div class="min-h-screen bg-gray-50 dark:bg-dark-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <app-back-button label="Back to Arcade" (backClick)="goBack()" />
+
+    @if (arcade()) {
+    <app-page-header
+      [title]="arcade()!.name + ' - Games'"
+      [description]="'Browse all ' + totalGames() + ' games available at this arcade'"
+      [icon]="Gamepad2"
+    />
+    }
+
+    <!-- Search and Filters -->
+    <app-filter-section
+      [expanded]="showFilters()"
+      [toggleIcon]="Filter"
+      (toggleClick)="toggleFilters()"
+    >
+      <app-search-input
+        search
+        [value]="searchTerm()"
+        placeholder="Search games..."
+        (searchChange)="onSearchInput($event)"
+      />
+
+      <div filters class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <app-select-filter
+          label="Genre"
+          placeholder="All Genres"
+          [value]="selectedGenre()"
+          [options]="availableGenres()"
+          (valueChange)="selectedGenre.set($event); onGenreChange()"
+        />
+
+        <app-select-filter
+          label="Developer"
+          placeholder="All Developers"
+          [value]="selectedDeveloper()"
+          [options]="availableDevelopers()"
+          (valueChange)="selectedDeveloper.set($event); onDeveloperChange()"
+        />
+
+        <div class="flex items-end">
+          <button
+            (click)="clearFilters()"
+            class="w-full px-4 py-2 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 rounded-lg transition flex items-center justify-center gap-2"
+          >
+            <lucide-icon [img]="X" [size]="18"></lucide-icon>
+            Clear Filters
+          </button>
+        </div>
+      </div>
+
+      <app-active-filters
+        active
+        [hasActiveFilters]="!!(searchTerm() || selectedGenre() || selectedDeveloper())"
+      >
+        @if (searchTerm()) {
+        <app-filter-badge label="Search" [value]="searchTerm()" />
+        } @if (selectedGenre()) {
+        <app-filter-badge label="Genre" [value]="selectedGenre()" />
+        } @if (selectedDeveloper()) {
+        <app-filter-badge label="Developer" [value]="selectedDeveloper()" />
+        }
+      </app-active-filters>
+    </app-filter-section>
+
+    @if (isLoading()) {
+    <app-loading-spinner [icon]="Gamepad2" />
+    } @else {
+    <app-results-count [current]="games().length" [total]="totalGames()" label="games" />
+
+    <!-- Games Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (game of games(); track game.id) {
+      <app-games-list-card [game]="game" />
+      } @empty {
+      <app-empty-state
+        [icon]="Gamepad2"
+        title="No games found"
+        [showAction]="!!(searchTerm() || selectedGenre() || selectedDeveloper())"
+        actionLabel="Clear all filters"
+        (actionClick)="clearFilters()"
+      />
+      }
+    </div>
+    }
+  </div>
+</div>

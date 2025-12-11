@@ -22,11 +22,19 @@ import {
   Gamepad2,
 } from 'lucide-angular';
 import { ToastrService } from 'ngx-toastr';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
+import { BackButtonComponent } from '../../components/back-button/back-button.component';
 
 @Component({
   selector: 'app-game-detail',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, RouterLink],
+  imports: [
+    CommonModule,
+    LucideAngularModule,
+    RouterLink,
+    LoadingSpinnerComponent,
+    BackButtonComponent,
+  ],
   templateUrl: './game-detail.html',
   styleUrl: './game-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

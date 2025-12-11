@@ -40,6 +40,13 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/arcade-detail/arcade-detail').then((m) => m.ArcadeDetail),
   },
   {
+    path: 'arcades/:id/games',
+    data: {
+      RenderMode: 'client',
+    },
+    loadComponent: () => import('./pages/arcade-games/arcade-games').then((m) => m.ArcadeGames),
+  },
+  {
     path: 'arcades/:arcadeId/games/:gameId',
     data: {
       RenderMode: 'client',
