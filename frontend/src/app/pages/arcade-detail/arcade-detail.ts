@@ -25,11 +25,24 @@ import {
 } from 'lucide-angular';
 import { ToastrService } from 'ngx-toastr';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
+import { ArcadeGamesSectionComponent } from '../../components/arcade-games-section/arcade-games-section.component';
+import { ArcadeMatchesSectionComponent } from '../../components/arcade-matches-section/arcade-matches-section.component';
+import { ArcadePlayersSectionComponent } from '../../components/arcade-players-section/arcade-players-section.component';
+import { ArcadeRankingSectionComponent } from '../../components/arcade-ranking-section/arcade-ranking-section.component';
 
 @Component({
   selector: 'app-arcade-detail',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, GameCardComponent, RouterLink],
+  imports: [
+    CommonModule,
+    LucideAngularModule,
+    GameCardComponent,
+    RouterLink,
+    ArcadeGamesSectionComponent,
+    ArcadeMatchesSectionComponent,
+    ArcadePlayersSectionComponent,
+    ArcadeRankingSectionComponent,
+  ],
   templateUrl: './arcade-detail.html',
   styleUrl: './arcade-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

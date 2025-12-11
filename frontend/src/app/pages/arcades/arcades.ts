@@ -44,7 +44,7 @@ export class Arcades {
   readonly Gamepad2 = Gamepad2;
   readonly Plus = Plus;
 
-  private filters = signal<ArcadeFilterRequest>({
+  filters = signal<ArcadeFilterRequest>({
     page: 1,
     per_page: 9,
     search: '',

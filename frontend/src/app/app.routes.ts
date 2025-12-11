@@ -39,5 +39,11 @@ export const routes: Routes = [
     },
     loadComponent: () => import('./pages/arcade-detail/arcade-detail').then((m) => m.ArcadeDetail),
   },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  {
+    path: 'arcades/:arcadeId/games/:gameId',
+    data: {
+      RenderMode: 'client',
+    },
+    loadComponent: () => import('./pages/game-detail/game-detail').then((m) => m.GameDetail),
+  },
 ];

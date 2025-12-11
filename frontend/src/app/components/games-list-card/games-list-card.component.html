@@ -1,0 +1,31 @@
+<a
+  [routerLink]="['/arcades', game().arcade_id, 'games', game().id]"
+  class="bg-gray-50 dark:bg-dark-100 hover:bg-gray-100 dark:hover:bg-dark-200 rounded-lg p-4 border border-gray-200 dark:border-dark-200 transition duration-200 cursor-pointer h-full flex flex-col no-underline"
+>
+  <div class="flex flex-col justify-between h-full">
+    <div class="flex-1 min-w-0">
+      <h3
+        class="font-bold text-gray-900 dark:text-white mb-1 truncate hover:text-primary-600 dark:hover:text-primary-400"
+      >
+        {{ game().name }}
+      </h3>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">{{ game().developer }}</p>
+      <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+        {{ game().description }}
+      </p>
+    </div>
+    <div class="flex items-center justify-between gap-2 mt-auto">
+      <span
+        class="text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 px-2 py-1 rounded"
+      >
+        {{ game().release_year }}
+      </span>
+      <div class="flex items-center gap-1">
+        <lucide-icon [img]="Star" [size]="14" class="text-yellow-400"></lucide-icon>
+        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          {{ game().rating | number : '1.1-1' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</a>

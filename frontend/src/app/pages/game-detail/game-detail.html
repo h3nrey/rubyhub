@@ -1,0 +1,105 @@
+<div class="min-h-screen bg-gray-50 dark:bg-dark-300">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Back Button -->
+    <button
+      (click)="goBack()"
+      class="flex items-center gap-2 mb-6 text-primary-600 dark:text-primary-500 hover:text-primary-700 dark:hover:text-primary-400 transition"
+    >
+      <lucide-icon [img]="ArrowLeft" [size]="20"></lucide-icon>
+      <span class="font-semibold">Back</span>
+    </button>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <div class="flex justify-center items-center py-12">
+      <div class="animate-spin text-primary-600 dark:text-primary-500">
+        <lucide-icon [img]="Gamepad2" [size]="48"></lucide-icon>
+      </div>
+    </div>
+    } @else if (!isLoading() && game()) {
+    <!-- Game Header -->
+    <div class="bg-white dark:bg-dark-50 rounded-lg shadow-lg overflow-hidden mb-8">
+      <div class="h-64 bg-gradient-to-r from-primary-500 to-primary-600"></div>
+
+      <div class="px-6 py-8">
+        <div class="mb-6">
+          <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">
+            {{ game()?.name }}
+          </h1>
+
+          <!-- Game Metadata -->
+          <div class="flex flex-wrap items-center gap-6 mb-4 text-gray-600 dark:text-gray-400">
+            <div class="flex items-center gap-2">
+              <lucide-icon [img]="User" [size]="18"></lucide-icon>
+              <span class="text-sm">{{ game()?.developer }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <lucide-icon [img]="Calendar" [size]="18"></lucide-icon>
+              <span class="text-sm">{{ game()?.release_year }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <lucide-icon [img]="Tag" [size]="18"></lucide-icon>
+              <span
+                class="text-xs font-semibold bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 px-3 py-1 rounded-full"
+              >
+                {{ game()?.genre }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Rating -->
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1">
+              @for (isFilled of getRatingStars(); track isFilled) { @if (isFilled) {
+              <lucide-icon
+                [img]="Star"
+                [size]="20"
+                class="text-yellow-400 fill-yellow-400"
+              ></lucide-icon>
+              } @else {
+              <lucide-icon
+                [img]="Star"
+                [size]="20"
+                class="text-gray-300 dark:text-gray-600"
+              ></lucide-icon>
+              } }
+            </div>
+            <span class="text-lg font-bold text-gray-800 dark:text-white">
+              {{ game()?.rating | number : '1.1-1' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        @if (game()?.description) {
+        <div class="mt-6">
+          <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">About</h3>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">{{ game()?.description }}</p>
+        </div>
+        }
+
+        <!-- Arcade Info -->
+        @if (arcade()) {
+        <div class="mt-8 pt-8 border-t border-gray-200 dark:border-dark-200">
+          <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Available at</h3>
+          <div
+            class="flex items-center justify-between p-4 bg-gray-50 dark:bg-dark-100 rounded-lg border border-gray-200 dark:border-dark-200"
+          >
+            <div>
+              <p class="font-semibold text-gray-800 dark:text-white">{{ arcade()?.name }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ arcade()?.theme }} Theme</p>
+            </div>
+            <a
+              [routerLink]="['/arcades', arcade()?.id]"
+              class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition font-semibold"
+            >
+              View Arcade
+            </a>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+</div>
