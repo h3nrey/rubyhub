@@ -25,6 +25,23 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_183726) do
     t.index ["owner_id"], name: "index_arcades_on_owner_id"
   end
 
+  create_table "games", force: :cascade do |t|
+    t.bigint "arcade_id", null: false
+    t.string "cover_image"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "developer"
+    t.string "genre"
+    t.string "name", null: false
+    t.decimal "rating", precision: 3, scale: 1
+    t.integer "release_year"
+    t.datetime "updated_at", null: false
+    t.index ["arcade_id"], name: "index_games_on_arcade_id"
+    t.index ["developer"], name: "index_games_on_developer"
+    t.index ["genre"], name: "index_games_on_genre"
+    t.index ["name"], name: "index_games_on_name"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email"
@@ -35,4 +52,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_08_183726) do
   end
 
   add_foreign_key "arcades", "users", column: "owner_id"
+  add_foreign_key "games", "arcades"
 end

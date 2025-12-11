@@ -1,6 +1,7 @@
 class Arcade < ApplicationRecord
   # Associations
   belongs_to :owner, class_name: 'User'
+  has_many :games, dependent: :destroy
 
   # Validations
   validates :name, presence: true, uniqueness: true

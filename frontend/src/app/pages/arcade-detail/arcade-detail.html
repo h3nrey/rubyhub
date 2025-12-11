@@ -1,6 +1,5 @@
 <div class="min-h-screen bg-gray-50 dark:bg-dark-300">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Header with back button -->
     <button
       (click)="goBack()"
       class="flex items-center gap-2 mb-6 text-primary-600 dark:text-primary-500 hover:text-primary-700 dark:hover:text-primary-400 transition"
@@ -9,22 +8,17 @@
       <span class="font-semibold">Back to Arcades</span>
     </button>
 
-    <!-- Loading State -->
     @if (isLoading()) {
     <div class="flex justify-center items-center py-12">
       <div class="animate-spin text-primary-600 dark:text-primary-500">
         <lucide-icon [img]="Gamepad2" [size]="48"></lucide-icon>
       </div>
     </div>
-    }
-
-    <!-- Arcade Details -->
-    @if (!isLoading() && arcade()) {
+    } @if (!isLoading() && arcade()) {
     <div class="bg-white dark:bg-dark-50 rounded-lg shadow-lg overflow-hidden mb-8">
       <div class="h-48 bg-gradient-to-r from-primary-500 to-primary-600"></div>
 
       <div class="px-6 py-8">
-        <!-- Title and Status -->
         <div class="flex items-start justify-between mb-6">
           <div>
             <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">
@@ -51,22 +45,51 @@
       </div>
     </div>
 
-    <!-- Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Left Column - Games and Matches -->
       <div class="lg:col-span-2 space-y-8">
-        <!-- Games Section -->
         <div class="bg-white dark:bg-dark-50 rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
-            <lucide-icon [img]="Gamepad2" [size]="24"></lucide-icon>
-            Games
-          </h2>
-          <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-            <p>No games registered yet</p>
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <lucide-icon [img]="Gamepad2" [size]="24"></lucide-icon>
+              Games
+              <span
+                class="text-sm font-normal bg-gray-100 dark:bg-dark-100 text-gray-600 dark:text-gray-400 px-3 py-1 rounded-full"
+              >
+                {{ games().length }}
+              </span>
+            </h2>
           </div>
+
+          @if (gamesLoading()) {
+          <div class="flex justify-center py-8">
+            <div class="animate-spin text-primary-600 dark:text-primary-500">
+              <lucide-icon [img]="Gamepad2" [size]="32"></lucide-icon>
+            </div>
+          </div>
+          } @if (!gamesLoading()) {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            @for (game of games().slice(0, 4); track game.id) {
+            <app-game-card [game]="game" />
+            } @empty {
+            <div class="col-span-1 md:col-span-2 text-center py-8 text-gray-500 dark:text-gray-400">
+              <p>No games registered yet</p>
+            </div>
+            }
+          </div>
+
+          @if (games().length > 4) {
+          <div class="text-center pt-4 border-t border-gray-200 dark:border-dark-100">
+            <a
+              [routerLink]="['/arcades', arcade()?.id, 'games']"
+              class="inline-flex items-center gap-2 text-primary-600 dark:text-primary-500 hover:text-primary-700 dark:hover:text-primary-400 font-semibold transition"
+            >
+              Ver todos os {{ games().length }} jogos
+              <lucide-icon [img]="ArrowRight" [size]="18"></lucide-icon>
+            </a>
+          </div>
+          } }
         </div>
 
-        <!-- Recent Matches Section -->
         <div class="bg-white dark:bg-dark-50 rounded-lg shadow-md p-6">
           <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
             <lucide-icon [img]="Gamepad2" [size]="24"></lucide-icon>
@@ -78,9 +101,7 @@
         </div>
       </div>
 
-      <!-- Right Column - Players and Ranking -->
       <div class="space-y-8">
-        <!-- Players Section -->
         <div class="bg-white dark:bg-dark-50 rounded-lg shadow-md p-6">
           <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
             <lucide-icon [img]="Users" [size]="24"></lucide-icon>
@@ -91,7 +112,6 @@
           </div>
         </div>
 
-        <!-- Ranking Section -->
         <div class="bg-white dark:bg-dark-50 rounded-lg shadow-md p-6">
           <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
             <lucide-icon [img]="Trophy" [size]="24"></lucide-icon>
